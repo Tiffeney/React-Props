@@ -1,28 +1,40 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import  MovieApi from './api/mockMovie';
+import Movie from './components/Movie/Movie';
 
 class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
-  }
-}
 
-export default App;
+    state = { 
+        loading: true, //Default setting
+        movies: undefined //Given in Slack
+    }
+    
+    async componentDidMount() {
+        // debugger
+        let movies = await MovieApi.getAllMovie();
+        this.setState({ movies, loading: false });
+    }
+    render() {
+        //destructoring 
+        let { loading, movies, cast} = this.state;
+        // debugger
+        if (loading) return <h1>Loading.</h1> 
+        return(
+            <div>
+                <h1>Now Playing.</h1>
+                <div className="movie-container">
+                    {movies.map((m, i) => ( //Iterate through Movie array and render the movie for each one. i means index postiion
+                        <Movie 
+                        key={i}
+                        title={m.title}
+                        director={m.director}
+                        cast={m.cast}/>
+                        
+                    ))}
+                </div>
+            </div>
+        )
+    }
+};
+
+export default App
